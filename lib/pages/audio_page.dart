@@ -125,7 +125,7 @@ class AudioPage extends StatelessWidget {
                         height: 12,
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
                             onPressed: () {
@@ -139,13 +139,12 @@ class AudioPage extends StatelessWidget {
                               color: Colors.cyan,
                             ),
                           ),
-                          //SizedBox(width: 50,),
                           Obx(
                             () => CircleAvatar(
                                 radius: 40,
                                 backgroundColor: Colors.cyan,
                                 child: Transform.scale(
-                                  scale: 2,
+                                  scale: 1.75,
                                   child: IconButton(
                                     onPressed: () {
                                       if (controller.isPlaying.value) {
@@ -159,17 +158,18 @@ class AudioPage extends StatelessWidget {
                                     icon: controller.isPlaying.value
                                         ? const Icon(
                                             Icons.pause,
-                                            size: 34,
+                                            size: 30,
                                             color: Colors.white,
                                           )
                                         : const Icon(
                                             Icons.play_arrow_rounded,
-                                            size: 34,
+                                            size: 33,
                                             color: Colors.white,
                                           ),
                                   ),
                                 )),
                           ),
+                        
                           IconButton(
                             onPressed: () {
                               controller.playSong(

@@ -39,6 +39,10 @@ class PlayerController extends GetxController {
     audioPlayer.seek(duration);
   }
 
+playNextSong()
+{
+  
+}
   playSong(String? uri, index) {
     playIndex.value = index;
     try {
