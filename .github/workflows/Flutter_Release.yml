@@ -1,0 +1,56 @@
+name: Flutter_Release
+
+on:
+  push:
+    branches:
+      - main 
+jobs:
+  build:
+    name: Build and Release Flutter App
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.19  
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build Android APK
+        run: flutter build apk --release
+
+      - name: Build Android App Bundle (AAB)
+        run: flutter build appbundle
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload AAB Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+
+      - name: Build iOS (Requires macOS Runner)
+        if: runner.os == 'macOS'
+        run: |
+          flutter build ios --release --no-codesign
+
+      - name: Upload iOS Artifact
+        if: runner.os == 'macOS'
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-ios
+          path: build/ios/iphoneos
