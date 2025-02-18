@@ -38,21 +38,21 @@ jobs:
           git push origin $TAG_NAME
           git fetch --tags
 
-
       - name: Create GitHub Release
         id: create_release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          release_name: Release v1.0.${{ github.run_number }}
+          tag_name: $TAG_NAME  # Use the tag created in the previous step
+          release_name: Release $TAG_NAME  # Custom release name, can be omitted for auto generation
           draft: false
           prerelease: false
+          generate_release_notes: true  # Automatically generate release notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload APK to Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
+          files: build/app/outputs/flutter-apk/app-release.apk  # Ensure correct file path
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
