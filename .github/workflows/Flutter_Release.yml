@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main 
+
 jobs:
   build:
     name: Build and Release Flutter App
@@ -28,17 +29,30 @@ jobs:
       - name: Build Android App Bundle (AAB)
         run: flutter build appbundle
 
-      - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
         with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          tag_name: v1.0.${{ github.run_number }}
+          release_name: Release v1.0.${{ github.run_number }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload AAB Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload APK to Release
+        uses: softprops/action-gh-release@v1
         with:
-          name: release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
+          files: build/app/outputs/flutter-apk/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload AAB to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/app/outputs/bundle/release/app-release.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build iOS (Requires macOS Runner)
         if: runner.os == 'macOS'
@@ -47,7 +61,8 @@ jobs:
 
       - name: Upload iOS Artifact
         if: runner.os == 'macOS'
-        uses: actions/upload-artifact@v4
+        uses: softprops/action-gh-release@v1
         with:
-          name: release-ios
-          path: build/ios/iphoneos
+          files: build/ios/iphoneos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
