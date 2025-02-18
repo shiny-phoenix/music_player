@@ -29,8 +29,11 @@ jobs:
       - name: Build Android APK
         run: flutter build apk --release --split-per-abi
 
+      - name: List build directory contents
+        run: ls -R build
+
       - name: Verify APK exists
-        run: test -f build/app/outputs/flutter-apk/app-release.apk || { echo "APK not found!"; exit 1; }
+        run: test -f build/app/outputs/apk/release/app-release.apk || { echo "APK not found!"; exit 1; }
 
       - name: Create and Push Git Tag
         id: create_tag
@@ -57,7 +60,7 @@ jobs:
       - name: Upload APK to Release
         uses: softprops/action-gh-release@v2
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk  
+          files: build/app/outputs/apk/release/app-release.apk  
           tag_name: ${{ env.TAG_NAME }}  # Referencing tag for upload step
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
