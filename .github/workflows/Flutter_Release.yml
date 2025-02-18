@@ -6,7 +6,7 @@ on:
       - main 
 
 permissions:
-  contents: write
+  contents: write  # Grant write access to create a release
 
 jobs:
   build:
@@ -29,8 +29,11 @@ jobs:
       - name: Build Android APK
         run: flutter build apk --release
 
-      - name: Build Android App Bundle (AAB)
-        run: flutter build appbundle
+      - name: Create and Push Git Tag
+        run: |
+          TAG_NAME=v1.0.${{ github.run_number }}
+          git tag $TAG_NAME
+          git push origin $TAG_NAME
 
       - name: Create GitHub Release
         id: create_release
@@ -47,25 +50,5 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: build/app/outputs/flutter-apk/app-release.apk
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload AAB to Release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: build/app/outputs/bundle/release/app-release.aab
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build iOS (Requires macOS Runner)
-        if: runner.os == 'macOS'
-        run: |
-          flutter build ios --release --no-codesign
-
-      - name: Upload iOS Artifact
-        if: runner.os == 'macOS'
-        uses: softprops/action-gh-release@v1
-        with:
-          files: build/ios/iphoneos
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
