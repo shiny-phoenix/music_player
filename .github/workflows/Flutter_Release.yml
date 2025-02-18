@@ -27,12 +27,16 @@ jobs:
         run: flutter pub get
 
       - name: Build Android APK
-        run: flutter build apk --release
+        run: flutter build apk --release --split-per-abi
+
+      - name: Verify APK exists
+        run: test -f build/app/outputs/flutter-apk/app-release.apk || { echo "APK not found!"; exit 1; }
 
       - name: Create and Push Git Tag
         id: create_tag
         run: |
           TAG_NAME=v1.0.${{ github.run_number }}
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git tag -a $TAG_NAME -m "Release $TAG_NAME"
@@ -43,8 +47,7 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.create_tag.outputs.TAG_NAME }}  # Referencing tag from the previous step
-          release_name: Release ${{ steps.create_tag.outputs.TAG_NAME }}  # Used dynamically created tag name
+          tag_name: ${{ env.TAG_NAME }}  # Referencing tag from the previous step
           draft: false
           prerelease: false
           generate_release_notes: true  
@@ -55,6 +58,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: build/app/outputs/flutter-apk/app-release.apk  
-          tag_name: ${{ steps.create_tag.outputs.TAG_NAME }}  # Referencing tag for upload step
+          tag_name: ${{ env.TAG_NAME }}  # Referencing tag for upload step
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
