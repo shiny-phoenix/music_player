@@ -9,6 +9,14 @@ class AudioPage extends StatelessWidget {
   final List<SongModel> data;
   const AudioPage({super.key, required this.data});
 
+  String formatDuration(double seconds) {
+    Duration duration = Duration(seconds: seconds.toInt());
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$twoDigitMinutes:$twoDigitSeconds';
+  }
+
   @override
   Widget build(BuildContext context) {
     var controller = Get.find<PlayerController>();
@@ -94,6 +102,7 @@ class AudioPage extends StatelessWidget {
                         () => Row(
                           children: [
                             Text(
+                              //formatDuration(double.parse(controller.position.value)),
                               controller.duration.value,
                               style: const TextStyle(color: Colors.amber),
                             ),
@@ -106,15 +115,17 @@ class AudioPage extends StatelessWidget {
                                     .inSeconds
                                     .toDouble(),
                                 max: controller.max.value,
-                                value: controller.value.value,
+                                value: //double.parse(controller.position.value),
+                                controller.value.value,
                                 onChanged: (newValue) {
                                   controller.changeDurationToSeconds(
                                       newValue.toInt());
-                                  newValue = newValue;
+                                  //newValue = newValue;
                                 },
                               ),
                             ),
                             Text(
+                              //controller.max.value - controller.position.value,
                               controller.position.value,
                               style: const TextStyle(color: Colors.amber),
                             )
@@ -169,7 +180,6 @@ class AudioPage extends StatelessWidget {
                                   ),
                                 )),
                           ),
-                        
                           IconButton(
                             onPressed: () {
                               controller.playSong(
