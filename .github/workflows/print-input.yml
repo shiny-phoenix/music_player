@@ -14,4 +14,4 @@ jobs:
     steps:
       - name: Echo the input message
         run: | 
-        echo "User input: '${{ github.event.inputs.message }}' "
+          echo "User input: '${{ github.event.inputs.message }}' "
